@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,15 +26,16 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class EmployeesService {
-    private EmployeesRepository employeesRepository;
-    private Cloudinary cloudinary;
+    private final EmployeesRepository employeesRepository;
+    private final Cloudinary cloudinary;
+    private final PasswordEncoder bCryptEncoder;
 
     public Employee save(EmployeeDTO body) {
         if (employeesRepository.existsByEmail(body.email()))
             throw new BadRequestException("Email " + body.email() + " already in use!");
         if (employeesRepository.existsByUsername(body.username()))
             throw new BadRequestException("Username " + body.username() + " already in use!");
-        Employee newEmployee = new Employee(body.username(), body.name(), body.surname(), body.email(), body.password());
+        Employee newEmployee = new Employee(body.username(), body.name(), body.surname(), body.email(), this.bCryptEncoder.encode(body.password()));
         Employee savedEmployee = this.employeesRepository.save(newEmployee);
         log.info("Employee with id " + savedEmployee.getId() + " successfully saved!");
         return savedEmployee;

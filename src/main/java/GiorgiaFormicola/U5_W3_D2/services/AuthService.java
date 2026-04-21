@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class AuthService {
-
     private EmployeesService employeesService;
     private TokenTools tokenTools;
 
