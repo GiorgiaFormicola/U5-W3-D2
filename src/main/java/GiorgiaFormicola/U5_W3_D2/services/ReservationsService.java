@@ -123,9 +123,23 @@ public class ReservationsService {
         return updatedReservation;
     }
 
+    public Reservation findMyReservationByIdAndUpdate(Employee currentAuthenticatedEmployee, UUID reservationId, ReservationNotesDTO body) {
+        Reservation found = this.findMyReservationById(currentAuthenticatedEmployee, reservationId);
+        if (found.getTrip().getStatus().equals(TripStatus.COMPLETED))
+            throw new BadRequestException("Trip has already taken place on " + found.getTrip().getDate());
+        found.setNotes(body.notes());
+        Reservation updatedReservation = this.reservationsRepository.save(found);
+        log.info("Reservation with id " + updatedReservation.getId() + " successfully modified");
+        return updatedReservation;
+    }
+
     public void findByIdAndDelete(UUID reservationId) {
         Reservation found = this.findById(reservationId);
         this.reservationsRepository.delete(found);
     }
 
+    public void findMyReservationByIdAndDelete(Employee currentAuthenticatedEmployee, UUID reservationId) {
+        Reservation found = this.findMyReservationById(currentAuthenticatedEmployee, reservationId);
+        this.reservationsRepository.delete(found);
+    }
 }

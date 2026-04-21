@@ -93,5 +93,20 @@ public class ReservationsController {
         return this.reservationsService.findMyReservationById(currentAuthenticatedEmployee, reservationId);
     }
 
+    @PutMapping("/me/{reservationId}")
+    public Reservation getMyReservationByIdAndUpdate(@AuthenticationPrincipal Employee currentAuthenticatedEmployee, @PathVariable UUID reservationId, @RequestBody @Validated ReservationNotesDTO body, BindingResult validationResult) {
+        if (validationResult.hasErrors()) {
+            List<String> errorsList = validationResult.getAllErrors().stream().map(error -> error.getDefaultMessage()).toList();
+            throw new PayloadValidationException(errorsList);
+        }
+        return this.reservationsService.findMyReservationByIdAndUpdate(currentAuthenticatedEmployee, reservationId, body);
+    }
+
+    @DeleteMapping("/me/{reservationId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void getMyReservationByIdAndDelete(@AuthenticationPrincipal Employee currentAuthenticatedEmployee, @PathVariable UUID reservationId) {
+        this.reservationsService.findMyReservationByIdAndDelete(currentAuthenticatedEmployee, reservationId);
+    }
+
 
 }
