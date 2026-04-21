@@ -27,7 +27,7 @@ public class EmployeesController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyAuthority('ADMIN','SUPERADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public Employee saveNewEmployee(@RequestBody @Validated SignInDTO body, BindingResult validationResult) {
         if (validationResult.hasErrors()) {
             List<String> errors = validationResult.getAllErrors().stream().map(error -> error.getDefaultMessage()).toList();
@@ -37,7 +37,7 @@ public class EmployeesController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('ADMIN','SUPERADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public Page<Employee> getEmployees(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
@@ -46,13 +46,13 @@ public class EmployeesController {
     }
 
     @GetMapping("/{employeeId}")
-    @PreAuthorize("hasAnyAuthority('ADMIN','SUPERADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public Employee getEmployeeById(@PathVariable UUID employeeId) {
         return this.employeesService.findById(employeeId);
     }
 
     @PutMapping("/{employeeId}")
-    @PreAuthorize("hasAnyAuthority('ADMIN','SUPERADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public Employee getEmployeeByIdAndUpdate(@PathVariable UUID employeeId, @RequestBody @Validated EmployeeDTO body, BindingResult validationResult) {
         if (validationResult.hasErrors()) {
             List<String> errorsList = validationResult.getAllErrors().stream().map(error -> error.getDefaultMessage()).toList();
@@ -62,20 +62,20 @@ public class EmployeesController {
     }
 
     @DeleteMapping("/{employeeId}")
-    @PreAuthorize("hasAnyAuthority('ADMIN','SUPERADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void getEmployeeByIdAndDelete(@PathVariable UUID employeeId) {
         this.employeesService.findByIdAndDelete(employeeId);
     }
 
     @PatchMapping("/{employeeId}/picture")
-    @PreAuthorize("hasAnyAuthority('ADMIN','SUPERADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public Employee getEmployeeByIdAndUploadProfilePicture(@PathVariable UUID employeeId, @RequestParam("profile_picture") MultipartFile file) {
         return this.employeesService.findByIdAndUploadProfilePicture(employeeId, file);
     }
 
     @PatchMapping("/{employeeId}/role")
-    @PreAuthorize("hasAuthority('SUPERADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Employee getEmployeeByIdAndUpdateRole(@PathVariable UUID employeeId, @RequestBody @Validated RoleDTO body, BindingResult validationResult) {
         if (validationResult.hasErrors()) {
             List<String> errorsList = validationResult.getAllErrors().stream().map(error -> error.getDefaultMessage()).toList();
