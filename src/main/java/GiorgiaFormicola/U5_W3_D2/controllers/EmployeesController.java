@@ -88,4 +88,9 @@ public class EmployeesController {
         return this.employeesService.findByIdAndUpdate(currentAuthenticatedEmployee.getId(), body);
     }
 
+    @PatchMapping("/me/picture")
+    public Employee updateMyProfilePicture(@AuthenticationPrincipal Employee currentAuthenticatedEmployee, @RequestParam("profile_picture") MultipartFile file) {
+        return this.employeesService.findByIdAndUploadProfilePicture(currentAuthenticatedEmployee.getId(), file);
+    }
+
 }
