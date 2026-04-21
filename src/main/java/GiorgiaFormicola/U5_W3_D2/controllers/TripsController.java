@@ -8,6 +8,7 @@ import GiorgiaFormicola.U5_W3_D2.services.TripsService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ public class TripsController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public Trip saveNewTrip(@RequestBody @Validated TripDTO body, BindingResult validationResult) {
         if (validationResult.hasErrors()) {
             List<String> errors = validationResult.getAllErrors().stream().map(error -> error.getDefaultMessage()).toList();
@@ -32,6 +34,7 @@ public class TripsController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('USER','ADMIN')")
     public Page<Trip> getTrips(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
@@ -41,11 +44,13 @@ public class TripsController {
     }
 
     @GetMapping("/{tripId}")
+    @PreAuthorize("hasAnyAuthority('USER','ADMIN')")
     public Trip getTripById(@PathVariable UUID tripId) {
         return this.tripsService.findById(tripId);
     }
 
     @PutMapping("/{tripId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public Trip getTripByIdAndUpdate(@PathVariable UUID tripId, @RequestBody @Validated TripDateDTO body, BindingResult validationResult) {
         if (validationResult.hasErrors()) {
             List<String> errorsList = validationResult.getAllErrors().stream().map(error -> error.getDefaultMessage()).toList();
@@ -55,12 +60,14 @@ public class TripsController {
     }
 
     @DeleteMapping("/{tripId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void getTripByIdAndDelete(@PathVariable UUID tripId) {
         this.tripsService.findByIdAndDelete(tripId);
     }
 
     @PatchMapping("/{tripId}/status")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public Trip getTripByIdAndUpdateStatus(@PathVariable UUID tripId) {
         return this.tripsService.findByIdAndUpdateStatus(tripId);
     }
