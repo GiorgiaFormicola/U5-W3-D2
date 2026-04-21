@@ -3,6 +3,7 @@ package GiorgiaFormicola.U5_W3_D2.controllers;
 import GiorgiaFormicola.U5_W3_D2.entities.Employee;
 import GiorgiaFormicola.U5_W3_D2.exceptions.PayloadValidationException;
 import GiorgiaFormicola.U5_W3_D2.payloads.EmployeeDTO;
+import GiorgiaFormicola.U5_W3_D2.payloads.RoleDTO;
 import GiorgiaFormicola.U5_W3_D2.payloads.SignInDTO;
 import GiorgiaFormicola.U5_W3_D2.services.EmployeesService;
 import lombok.AllArgsConstructor;
@@ -71,6 +72,16 @@ public class EmployeesController {
     @PreAuthorize("hasAnyAuthority('ADMIN','SUPERADMIN')")
     public Employee getEmployeeByIdAndUploadProfilePicture(@PathVariable UUID employeeId, @RequestParam("profile_picture") MultipartFile file) {
         return this.employeesService.findByIdAndUploadProfilePicture(employeeId, file);
+    }
+
+    @PatchMapping("/{employeeId}/role")
+    @PreAuthorize("hasAuthority('SUPERADMIN')")
+    public Employee getEmployeeByIdAndUpdateRole(@PathVariable UUID employeeId, @RequestBody @Validated RoleDTO body, BindingResult validationResult) {
+        if (validationResult.hasErrors()) {
+            List<String> errorsList = validationResult.getAllErrors().stream().map(error -> error.getDefaultMessage()).toList();
+            throw new PayloadValidationException(errorsList);
+        }
+        return this.employeesService.findByIdAndUpdateRole(employeeId, body);
     }
 
     //ADDS "/me" ENDPOINTS

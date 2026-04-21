@@ -1,0 +1,11 @@
+package GiorgiaFormicola.U5_W3_D2.payloads;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+
+public record RoleDTO(
+        @NotBlank(message = "Role is mandatory")
+        @Pattern(regexp = "^(USER|ADMIN|SUPERADMIN)$", message = "Role must be one of the following values: USER, ADMIN, SUPERADMIN")
+        String role
+) {
+}

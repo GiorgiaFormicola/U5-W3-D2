@@ -1,10 +1,12 @@
 package GiorgiaFormicola.U5_W3_D2.services;
 
 import GiorgiaFormicola.U5_W3_D2.entities.Employee;
+import GiorgiaFormicola.U5_W3_D2.enums.RoleType;
 import GiorgiaFormicola.U5_W3_D2.exceptions.BadRequestException;
 import GiorgiaFormicola.U5_W3_D2.exceptions.NotFoundException;
 import GiorgiaFormicola.U5_W3_D2.exceptions.ValidationException;
 import GiorgiaFormicola.U5_W3_D2.payloads.EmployeeDTO;
+import GiorgiaFormicola.U5_W3_D2.payloads.RoleDTO;
 import GiorgiaFormicola.U5_W3_D2.payloads.SignInDTO;
 import GiorgiaFormicola.U5_W3_D2.repositories.EmployeesRepository;
 import com.cloudinary.Cloudinary;
@@ -99,5 +101,19 @@ public class EmployeesService {
 
     public Employee findByEmail(String email) {
         return this.employeesRepository.findByEmail(email).orElseThrow(() -> new NotFoundException(email));
+    }
+
+    public Employee findByIdAndUpdateRole(UUID employeeId, RoleDTO body) {
+        Employee found = this.findById(employeeId);
+        if (found.getRole().name().equals(body.role()))
+            throw new BadRequestException("The employee with id " + found.getId() + " has already a " + body.role() + " role");
+        RoleType newRole = null;
+        if (body.role().equals("USER")) newRole = RoleType.USER;
+        if (body.role().equals("ADMIN")) newRole = RoleType.ADMIN;
+        if (body.role().equals("SUPERADMIN")) newRole = RoleType.SUPERADMIN;
+        found.setRole(newRole);
+        Employee updatedEmployee = this.employeesRepository.save(found);
+        log.info("Employee with id " + updatedEmployee.getId() + "role successfully modified to " + updatedEmployee.getRole().name() + "!");
+        return updatedEmployee;
     }
 }
