@@ -1,19 +1,26 @@
 package GiorgiaFormicola.U5_W3_D2.entities;
 
+import GiorgiaFormicola.U5_W3_D2.enums.RoleType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "employees")
 @Getter
 @Setter
-
-public class Employee {
+@JsonIgnoreProperties({"accountNonExpired", "accountNonLocked", "authorities", "credentialsNonExpired", "enabled"})
+public class Employee implements UserDetails {
     @Id
     @GeneratedValue
     @Setter(AccessLevel.NONE)
@@ -38,6 +45,10 @@ public class Employee {
     @Column(name = "profile_picture_url", nullable = false)
     private String profilePictureURL;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private RoleType role;
+
     protected Employee() {
     }
 
@@ -48,5 +59,11 @@ public class Employee {
         this.email = email;
         this.password = password;
         this.profilePictureURL = "https://ui-avatars.com/api/?name=" + name + "+" + surname;
+        this.role = RoleType.USER;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(this.role.name()));
     }
 }
