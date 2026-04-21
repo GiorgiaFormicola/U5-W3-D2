@@ -93,4 +93,10 @@ public class EmployeesController {
         return this.employeesService.findByIdAndUploadProfilePicture(currentAuthenticatedEmployee.getId(), file);
     }
 
+    @DeleteMapping("/me")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteMyProfile(@AuthenticationPrincipal Employee currentAuthenticatedEmployee) {
+        this.employeesService.findByIdAndDelete(currentAuthenticatedEmployee.getId());
+    }
+
 }
