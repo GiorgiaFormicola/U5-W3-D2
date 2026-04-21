@@ -1,5 +1,6 @@
 package GiorgiaFormicola.U5_W3_D2.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -31,6 +32,7 @@ public class Employee {
     private String email;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     @Column(name = "profile_picture_url", nullable = false)
