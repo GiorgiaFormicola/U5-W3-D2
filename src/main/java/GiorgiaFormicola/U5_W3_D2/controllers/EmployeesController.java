@@ -3,6 +3,7 @@ package GiorgiaFormicola.U5_W3_D2.controllers;
 import GiorgiaFormicola.U5_W3_D2.entities.Employee;
 import GiorgiaFormicola.U5_W3_D2.exceptions.PayloadValidationException;
 import GiorgiaFormicola.U5_W3_D2.payloads.EmployeeDTO;
+import GiorgiaFormicola.U5_W3_D2.payloads.SignInDTO;
 import GiorgiaFormicola.U5_W3_D2.services.EmployeesService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,15 +24,16 @@ import java.util.UUID;
 public class EmployeesController {
     private EmployeesService employeesService;
 
-    /*@PostMapping
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Employee saveNewEmployee(@RequestBody @Validated EmployeeDTO body, BindingResult validationResult) {
+    @PreAuthorize("hasAnyAuthority('ADMIN','SUPERADMIN')")
+    public Employee saveNewEmployee(@RequestBody @Validated SignInDTO body, BindingResult validationResult) {
         if (validationResult.hasErrors()) {
             List<String> errors = validationResult.getAllErrors().stream().map(error -> error.getDefaultMessage()).toList();
             throw new PayloadValidationException(errors);
         }
         return this.employeesService.save(body);
-    }*/
+    }
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN','SUPERADMIN')")
@@ -75,6 +77,15 @@ public class EmployeesController {
     @GetMapping("/me")
     public Employee getMyProfile(@AuthenticationPrincipal Employee currentAuthenticatedEmployee) {
         return currentAuthenticatedEmployee;
+    }
+
+    @PutMapping("/me")
+    public Employee updateMyProfile(@AuthenticationPrincipal Employee currentAuthenticatedEmployee, @RequestBody @Validated EmployeeDTO body, BindingResult validationResult) {
+        if (validationResult.hasErrors()) {
+            List<String> errorsList = validationResult.getAllErrors().stream().map(error -> error.getDefaultMessage()).toList();
+            throw new PayloadValidationException(errorsList);
+        }
+        return this.employeesService.findByIdAndUpdate(currentAuthenticatedEmployee.getId(), body);
     }
 
 }

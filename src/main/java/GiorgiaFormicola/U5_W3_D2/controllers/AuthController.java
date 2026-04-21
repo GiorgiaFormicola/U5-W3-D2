@@ -2,9 +2,9 @@ package GiorgiaFormicola.U5_W3_D2.controllers;
 
 import GiorgiaFormicola.U5_W3_D2.entities.Employee;
 import GiorgiaFormicola.U5_W3_D2.exceptions.PayloadValidationException;
-import GiorgiaFormicola.U5_W3_D2.payloads.EmployeeDTO;
 import GiorgiaFormicola.U5_W3_D2.payloads.LoginDTO;
 import GiorgiaFormicola.U5_W3_D2.payloads.LoginResponseDTO;
+import GiorgiaFormicola.U5_W3_D2.payloads.SignInDTO;
 import GiorgiaFormicola.U5_W3_D2.services.AuthService;
 import GiorgiaFormicola.U5_W3_D2.services.EmployeesService;
 import lombok.AllArgsConstructor;
@@ -32,9 +32,9 @@ public class AuthController {
         return new LoginResponseDTO(this.authService.checkCredentialsAndGenerateToken(body));
     }
 
-    @PostMapping("/register")
+    @PostMapping("/signIn")
     @ResponseStatus(HttpStatus.CREATED)
-    public Employee saveNewEmployee(@RequestBody @Validated EmployeeDTO body, BindingResult validationResult) {
+    public Employee signIn(@RequestBody @Validated SignInDTO body, BindingResult validationResult) {
         if (validationResult.hasErrors()) {
             List<String> errors = validationResult.getAllErrors().stream().map(error -> error.getDefaultMessage()).toList();
             throw new PayloadValidationException(errors);

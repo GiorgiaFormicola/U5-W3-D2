@@ -5,6 +5,7 @@ import GiorgiaFormicola.U5_W3_D2.exceptions.BadRequestException;
 import GiorgiaFormicola.U5_W3_D2.exceptions.NotFoundException;
 import GiorgiaFormicola.U5_W3_D2.exceptions.ValidationException;
 import GiorgiaFormicola.U5_W3_D2.payloads.EmployeeDTO;
+import GiorgiaFormicola.U5_W3_D2.payloads.SignInDTO;
 import GiorgiaFormicola.U5_W3_D2.repositories.EmployeesRepository;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
@@ -30,7 +31,7 @@ public class EmployeesService {
     private final Cloudinary cloudinary;
     private final PasswordEncoder bCryptEncoder;
 
-    public Employee save(EmployeeDTO body) {
+    public Employee save(SignInDTO body) {
         if (employeesRepository.existsByEmail(body.email()))
             throw new BadRequestException("Email " + body.email() + " already in use!");
         if (employeesRepository.existsByUsername(body.username()))
