@@ -107,10 +107,7 @@ public class EmployeesService {
         Employee found = this.findById(employeeId);
         if (found.getRole().name().equals(body.role()))
             throw new BadRequestException("The employee with id " + found.getId() + " has already a " + body.role() + " role");
-        RoleType newRole = null;
-        if (body.role().equals("USER")) newRole = RoleType.USER;
-        if (body.role().equals("ADMIN")) newRole = RoleType.ADMIN;
-        if (body.role().equals("SUPERADMIN")) newRole = RoleType.SUPERADMIN;
+        RoleType newRole = RoleType.valueOf(body.role());
         found.setRole(newRole);
         Employee updatedEmployee = this.employeesRepository.save(found);
         log.info("Employee with id " + updatedEmployee.getId() + "role successfully modified to " + updatedEmployee.getRole().name() + "!");
