@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -42,11 +43,13 @@ public class EmployeesController {
     }
 
     @GetMapping("/{employeeId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','SUPERADMIN')")
     public Employee getEmployeeById(@PathVariable UUID employeeId) {
         return this.employeesService.findById(employeeId);
     }
 
     @PutMapping("/{employeeId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','SUPERADMIN')")
     public Employee getEmployeeByIdAndUpdate(@PathVariable UUID employeeId, @RequestBody @Validated EmployeeDTO body, BindingResult validationResult) {
         if (validationResult.hasErrors()) {
             List<String> errorsList = validationResult.getAllErrors().stream().map(error -> error.getDefaultMessage()).toList();
@@ -56,15 +59,22 @@ public class EmployeesController {
     }
 
     @DeleteMapping("/{employeeId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','SUPERADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void getEmployeeByIdAndDelete(@PathVariable UUID employeeId) {
         this.employeesService.findByIdAndDelete(employeeId);
     }
 
     @PatchMapping("/{employeeId}/picture")
+    @PreAuthorize("hasAnyAuthority('ADMIN','SUPERADMIN')")
     public Employee getEmployeeByIdAndUploadProfilePicture(@PathVariable UUID employeeId, @RequestParam("profile_picture") MultipartFile file) {
         return this.employeesService.findByIdAndUploadProfilePicture(employeeId, file);
     }
 
+    //ADDS "/me" ENDPOINTS
+    @GetMapping("/me")
+    public Employee getMyProfile(@AuthenticationPrincipal Employee currentAuthenticatedEmployee) {
+        return currentAuthenticatedEmployee;
+    }
 
 }
